@@ -18,11 +18,15 @@ getjob_param()
   arg1="name='$1'"
   if [ "$2" == "lastexecution" ]
   then
-    arg2="EXTRACT(EPOCH FROM NOW()-EndTime)::integer)"
-  elif [ "$2" == "bytes" ]
+    arg2="EXTRACT(EPOCH FROM NOW()-EndTime)::integer"
+  elif [ "$2" == "jobbytes" ]
   then
     arg1="name='$1' AND jobstatus='T' AND level='$3'"
-    arg2="jobbytes"
+    arg2=$2
+  elif [ "$2" == "duration" ]
+  then
+    arg1="name='$1' AND jobstatus='T' AND level='$3'"
+    arg2="EXTRACT(EPOCH FROM EndTime-StartTime)::integer"
   else
     arg2=$2
   fi
