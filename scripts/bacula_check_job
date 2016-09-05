@@ -1,0 +1,36 @@
+#!/bin/bash
+
+## GET DB CONFIG
+getdb_config() {
+  bacula_conf=`sed '/^#/d' /etc/bacula/bacula-dir.conf`
+  bacula_conf=`echo "$bacula_conf" | grep dbname`
+  bacula_conf=`echo "$bacula_conf" | sed 's/ //g' | sed 's/;/\n/g' > /tmp/bacula_conf`
+  source /tmp/bacula_conf
+  if [ "$DBAddress" == "" ]
+  then
+    DBAddress="localhost"
+  fi
+}
+
+## GET EACH JOB STATUS, BYTES, LEVEL AND LAST EXECUTION
+getjob_param()
+{
+  arg1="name='$1'"
+  if [ "$2" == "lastexecution" ]
+  then
+    arg2="EXTRACT(EPOCH FROM NOW()-EndTime)::integer)"
+  elif [ "$2" == "bytes" ]
+  then
+    arg1="name='$1' AND jobstatus='T' AND level='$3'"
+    arg2="jobbytes"
+  else
+    arg2=$2
+  fi
+  status_job=$(export PGPASSWORD=$dbpassword && /usr/bin/psql -h$DBAddress -U$dbuser -d$dbname -t -c "SELECT $arg2 FROM Job WHERE $arg1 ORDER BY jobid DESC LIMIT 1 OFFSET 0"|xargs)
+  echo $status_job
+}
+
+## EXECUTION
+getdb_config
+getjob_param $1 $2 $3
+rm -f /tmp/bacula_conf
