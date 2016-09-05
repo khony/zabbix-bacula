@@ -12,6 +12,7 @@ resources
 roadmap
 ===
 * Compatibility with MySQL
+* Install script
 
 contributors
 =====
