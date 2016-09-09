@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>3.0</version>
-    <date>2016-09-09T12:30:39Z</date>
+    <date>2016-09-09T18:02:19Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -432,7 +432,7 @@
                             <dependencies/>
                         </trigger_prototype>
                         <trigger_prototype>
-                            <expression>{Template App Bacula:BACULA.check[{#JOB},jobstatus].regexp(T,1)}=0 and {Template App Bacula:BACULA.check[{#JOB},jobstatus].regexp(R,1)}=0</expression>
+                            <expression>{Template App Bacula:BACULA.check[{#JOB},jobstatus].regexp(T,1)}=0 or {Template App Bacula:BACULA.check[{#JOB},jobstatus].regexp(R,1)}=0</expression>
                             <name>Bacula Job {#JOB} Status</name>
                             <url/>
                             <status>0</status>
