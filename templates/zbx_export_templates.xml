@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>3.0</version>
-    <date>2016-09-09T18:02:19Z</date>
+    <date>2016-09-13T13:59:43Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -30,7 +30,7 @@
                     <snmp_community/>
                     <snmp_oid/>
                     <key>BACULA.discovery</key>
-                    <delay>14400</delay>
+                    <delay>3600</delay>
                     <status>0</status>
                     <allowed_hosts/>
                     <snmpv3_contextname/>
@@ -328,8 +328,8 @@
                             <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>BACULA.check[{#JOB},jobstatus]</key>
-                            <delay>7200</delay>
-                            <history>90</history>
+                            <delay>1800</delay>
+                            <history>30</history>
                             <trends>0</trends>
                             <status>0</status>
                             <value_type>1</value_type>
@@ -372,8 +372,8 @@
                             <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>BACULA.check[{#JOB},lastexecution]</key>
-                            <delay>7200</delay>
-                            <history>90</history>
+                            <delay>1800</delay>
+                            <history>30</history>
                             <trends>365</trends>
                             <status>0</status>
                             <value_type>3</value_type>
@@ -432,14 +432,29 @@
                             <dependencies/>
                         </trigger_prototype>
                         <trigger_prototype>
-                            <expression>{Template App Bacula:BACULA.check[{#JOB},jobstatus].regexp(T,1)}=0 or {Template App Bacula:BACULA.check[{#JOB},jobstatus].regexp(R,1)}=0</expression>
+                            <expression>{Template App Bacula:BACULA.check[{#JOB},jobstatus].regexp(R,1)}=1 or {Template App Bacula:BACULA.check[{#JOB},jobstatus].regexp(C,1)}=1</expression>
+                            <name>Bacula Job {#JOB} Running</name>
+                            <url/>
+                            <status>0</status>
+                            <priority>1</priority>
+                            <description/>
+                            <type>0</type>
+                            <dependencies/>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                            <expression>{Template App Bacula:BACULA.check[{#JOB},jobstatus].regexp(T,1)}=0</expression>
                             <name>Bacula Job {#JOB} Status</name>
                             <url/>
                             <status>0</status>
                             <priority>4</priority>
                             <description/>
                             <type>0</type>
-                            <dependencies/>
+                            <dependencies>
+                                <dependency>
+                                    <name>Bacula Job {#JOB} Running</name>
+                                    <expression>{Template App Bacula:BACULA.check[{#JOB},jobstatus].regexp(R,1)}=1 or {Template App Bacula:BACULA.check[{#JOB},jobstatus].regexp(C,1)}=1</expression>
+                                </dependency>
+                            </dependencies>
                         </trigger_prototype>
                     </trigger_prototypes>
                     <graph_prototypes>
