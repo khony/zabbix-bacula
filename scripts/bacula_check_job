@@ -15,20 +15,20 @@ getdb_config() {
 ## GET EACH JOB STATUS, BYTES, LEVEL AND LAST EXECUTION FOR PGSQL
 get_job_param_pgsql()
 {
-  arg1="name='$1'"
-  if [ "$2" == "lastexecution" ]
+  arg1="name='$2'"
+  if [ "$3" == "lastexecution" ]
   then
     arg2="EXTRACT(EPOCH FROM NOW()-EndTime)::integer"
-  elif [ "$2" == "jobbytes" ]
+  elif [ "$3" == "jobbytes" ]
   then
-    arg1="name='$1' AND jobstatus='T' AND level='$3'"
-    arg2=$2
-  elif [ "$2" == "duration" ]
+    arg1="name='$2' AND jobstatus='T' AND level='$4'"
+    arg2=$3
+  elif [ "$3" == "duration" ]
   then
-    arg1="name='$1' AND jobstatus='T' AND level='$3'"
+    arg1="name='$2' AND jobstatus='T' AND level='$4'"
     arg2="EXTRACT(EPOCH FROM EndTime-StartTime)::integer"
   else
-    arg2=$2
+    arg2=$3
   fi
   status_job=$(export PGPASSWORD=$dbpassword && /usr/bin/psql -h$DBAddress -U$dbuser -d$dbname -t -c "SELECT $arg2 FROM Job WHERE $arg1 ORDER BY jobid DESC LIMIT 1 OFFSET 0"|xargs)
   echo $status_job
@@ -50,7 +50,7 @@ get_job_param()
     arg1="name='$1' AND jobstatus='T' AND level='$3'"
     arg2="EXTRACT(EPOCH FROM EndTime-StartTime)::integer"
   else
-    arg2=$2
+    arg2=$3
   fi
   status_job=$(export PGPASSWORD=$dbpassword && /usr/bin/psql -h$DBAddress -U$dbuser -d$dbname -t -c "SELECT $arg2 FROM Job WHERE $arg1 ORDER BY jobid DESC LIMIT 1 OFFSET 0"|xargs)
   echo $status_job
@@ -71,7 +71,7 @@ get_job_param_mysql()
     arg1="name='$1' AND jobstatus='T' AND level='$3'"
     arg2="TIMESTAMPDIFF(SECOND,StartTime,EndTime)"
   else
-    arg2=$2
+    arg2=$3
   fi
   status_job=$(/usr/bin/mysql -h$DBAddress -u $dbuser -p$dbpassword -D $dbname -e "SELECT $arg2 FROM Job WHERE $arg1 ORDER BY jobid DESC LIMIT 1 OFFSET 0" --skip-column-names|xargs)
   echo $status_job
@@ -79,10 +79,10 @@ get_job_param_mysql()
 
 ## EXECUTION
 getdb_config
-if [ "$4" == "MYSQL" ];then
-  get_job_param_mysql $1 $2 $3
+if [ "$1" == "MYSQL" ];then
+  get_job_param_mysql $2 $3 $4
 else
-  get_job_param $1 $2 $3
+  get_job_param $2 $3 $4
 fi
 
 rm -f /tmp/bacula_conf
