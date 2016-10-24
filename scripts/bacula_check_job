@@ -35,7 +35,7 @@ getjob_param_pgsql()
 }
 
 ## GET EACH JOB STATUS, BYTES, LEVEL AND LAST EXECUTION FOR MYSQL
-getjob_param_mysql()
+getjob_param()
 {
   arg1="name='$1'"
   if [ "$2" == "lastexecution" ]
