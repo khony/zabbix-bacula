@@ -79,7 +79,7 @@ get_job_param_mysql()
 
 ## EXECUTION
 getdb_config
-ISPOSTGRES=$(export PGPASSWORD=$dbpassword && /usr/bin/psql -h$DBAddress -U$dbuser -d$dbname -l|grep $dbname|xargs)
+ISPOSTGRES=$(export PGPASSWORD=$dbpassword && /usr/bin/psql -h$DBAddress -U$dbuser -d$dbname -l 2> /dev/null|grep $dbname|xargs)
 if [ "$ISPOSTGRES" == "" ];then
   get_job_param_mysql $1 $2 $3
 else
