@@ -15,17 +15,17 @@ getdb_config() {
 ## GET EACH JOB STATUS, BYTES, LEVEL AND LAST EXECUTION FOR PGSQL
 get_job_param_pgsql()
 {
-  arg1="name='$2'"
-  if [ "$3" == "lastexecution" ]
+  arg1="name='$1'"
+  if [ "$2" == "lastexecution" ]
   then
     arg2="EXTRACT(EPOCH FROM NOW()-EndTime)::integer"
-  elif [ "$3" == "jobbytes" ]
+  elif [ "$2" == "jobbytes" ]
   then
-    arg1="name='$2' AND jobstatus='T' AND level='$4'"
-    arg2=$3
-  elif [ "$3" == "duration" ]
+    arg1="name='$1' AND jobstatus='T' AND level='$3'"
+    arg2=$2
+  elif [ "$2" == "duration" ]
   then
-    arg1="name='$2' AND jobstatus='T' AND level='$4'"
+    arg1="name='$1' AND jobstatus='T' AND level='$3'"
     arg2="EXTRACT(EPOCH FROM EndTime-StartTime)::integer"
   else
     arg2=$3
@@ -79,10 +79,11 @@ get_job_param_mysql()
 
 ## EXECUTION
 getdb_config
-if [ "$1" == "MYSQL" ];then
-  get_job_param_mysql $2 $3 $4
+ISPOSTGRES=$(export PGPASSWORD=$dbpassword && /usr/bin/psql -h$DBAddress -U$dbuser -d$dbname -l|grep $dbname|xargs)
+if [ "$ISPOSTGRES" == "" ];then
+  get_job_param_mysql $1 $2 $3
 else
-  get_job_param $2 $3 $4
+  get_job_param $1 $2 $3
 fi
 
 rm -f /tmp/bacula_conf
