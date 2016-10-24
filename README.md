@@ -1,6 +1,6 @@
 zabbix-bacula
 ===
-Bacula backups monitoring for Zabbix (Only Bacula-PGSQL)
+Bacula backups monitoring for Zabbix
 
 resources/items/triggers
 ===
