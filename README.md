@@ -14,7 +14,6 @@ resources/items/triggers
 
 roadmap
 ===
-* Compatibility with MySQL
 * Install script
 
 installation
@@ -22,6 +21,7 @@ installation
 * create a sudo entry to execute script
 * copy conf/Bacula.conf to /etc/zabbix/zabbix.agent.d/
 * copy scripts/ to /etc/zabbix/scripts
+* import template
 
 contributors
 =====
