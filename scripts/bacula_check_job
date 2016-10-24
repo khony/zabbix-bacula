@@ -13,7 +13,7 @@ getdb_config() {
 }
 
 ## GET EACH JOB STATUS, BYTES, LEVEL AND LAST EXECUTION FOR PGSQL
-getjob_param_pgsql()
+get_job_param_pgsql()
 {
   arg1="name='$1'"
   if [ "$2" == "lastexecution" ]
@@ -35,7 +35,7 @@ getjob_param_pgsql()
 }
 
 ## GET EACH JOB STATUS, BYTES, LEVEL AND LAST EXECUTION FOR MYSQL
-getjob_param()
+get_job_param()
 {
   arg1="name='$1'"
   if [ "$2" == "lastexecution" ]
@@ -56,7 +56,7 @@ getjob_param()
   echo $status_job
 }
 
-getjob_param_mysql()
+get_job_param_mysql()
 {
   arg1="name='$1'"
   if [ "$2" == "lastexecution" ]
