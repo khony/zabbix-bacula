@@ -50,7 +50,7 @@ get_job_param()
     arg1="name='$1' AND jobstatus='T' AND level='$3'"
     arg2="EXTRACT(EPOCH FROM EndTime-StartTime)::integer"
   else
-    arg2=$3
+    arg2=$2
   fi
   status_job=$(export PGPASSWORD=$dbpassword && /usr/bin/psql -h$DBAddress -U$dbuser -d$dbname -t -c "SELECT $arg2 FROM Job WHERE $arg1 ORDER BY jobid DESC LIMIT 1 OFFSET 0"|xargs)
   echo $status_job
@@ -71,7 +71,7 @@ get_job_param_mysql()
     arg1="name='$1' AND jobstatus='T' AND level='$3'"
     arg2="TIMESTAMPDIFF(SECOND,StartTime,EndTime)"
   else
-    arg2=$3
+    arg2=$2
   fi
   status_job=$(/usr/bin/mysql -h$DBAddress -u $dbuser -p$dbpassword -D $dbname -e "SELECT $arg2 FROM Job WHERE $arg1 ORDER BY jobid DESC LIMIT 1 OFFSET 0" --skip-column-names|xargs)
   echo $status_job
