@@ -4,8 +4,8 @@
 getdb_config() {
   bacula_conf=`sed '/^#/d' /etc/bacula/bacula-dir.conf`
   bacula_conf=`echo "$bacula_conf" | grep dbname`
-  bacula_conf=`echo "$bacula_conf" | sed 's/ //g' | sed 's/;/\n/g' > /tmp/bacula_conf`
-  source /tmp/bacula_conf
+  bacula_conf=`echo "$bacula_conf" | sed 's/ //g' | sed 's/;/\n/g' > /tmp/bacula_conf_${pid}`
+  source /tmp/bacula_conf_${pid}
   if [ "$DBAddress" == "" ]
   then
     DBAddress="localhost"
@@ -86,4 +86,4 @@ else
   get_job_param $1 $2 $3
 fi
 
-rm -f /tmp/bacula_conf
+rm -f /tmp/bacula_conf_${pid}
