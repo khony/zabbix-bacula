@@ -2,6 +2,7 @@
 
 ## GET DB CONFIG
 getdb_config() {
+  pid=$$
   bacula_conf=`sed '/^#/d' /etc/bacula/bacula-dir.conf`
   bacula_conf=`echo "$bacula_conf" | grep dbname`
   bacula_conf=`echo "$bacula_conf" | sed 's/ //g' | sed 's/;/\n/g' > /tmp/bacula_conf_${pid}`
