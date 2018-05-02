@@ -2,10 +2,11 @@
 
 ## GET DB CONFIG
 getdb_config() {
+  pid=$$
   bacula_conf=`sed '/^#/d' /etc/bacula/bacula-dir.conf`
   bacula_conf=`echo "$bacula_conf" | grep dbname`
-  bacula_conf=`echo "$bacula_conf" | sed 's/ //g' | sed 's/;/\n/g' > /tmp/bacula_conf`
-  source /tmp/bacula_conf
+  bacula_conf=`echo "$bacula_conf" | sed 's/ //g' | sed 's/;/\n/g' > /tmp/bacula_conf_${pid}`
+  source /tmp/bacula_conf_${pid}
   if [ "$DBAddress" == "" ]
   then
     DBAddress="localhost"
@@ -31,29 +32,13 @@ get_job_param_pgsql()
     arg2=$3
   fi
   status_job=$(export PGPASSWORD=$dbpassword && /usr/bin/psql -h$DBAddress -U$dbuser -d$dbname -t -c "SELECT $arg2 FROM Job WHERE $arg1 ORDER BY jobid DESC LIMIT 1 OFFSET 0"|xargs)
-  echo $status_job
-}
-
-## GET EACH JOB STATUS, BYTES, LEVEL AND LAST EXECUTION FOR MYSQL
-get_job_param()
-{
-  arg1="name='$1'"
-  if [ "$2" == "lastexecution" ]
+  if [ "$status_job" == "" ]
   then
-    arg2="EXTRACT(EPOCH FROM NOW()-EndTime)::integer"
-  elif [ "$2" == "jobbytes" ]
-  then
-    arg1="name='$1' AND jobstatus='T' AND level='$3'"
-    arg2=$2
-  elif [ "$2" == "duration" ]
-  then
-    arg1="name='$1' AND jobstatus='T' AND level='$3'"
-    arg2="EXTRACT(EPOCH FROM EndTime-StartTime)::integer"
+    echo "0"
   else
-    arg2=$2
+    echo $status_job
   fi
-  status_job=$(export PGPASSWORD=$dbpassword && /usr/bin/psql -h$DBAddress -U$dbuser -d$dbname -t -c "SELECT $arg2 FROM Job WHERE $arg1 ORDER BY jobid DESC LIMIT 1 OFFSET 0"|xargs)
-  echo $status_job
+
 }
 
 get_job_param_mysql()
@@ -74,7 +59,12 @@ get_job_param_mysql()
     arg2=$2
   fi
   status_job=$(/usr/bin/mysql -h$DBAddress -u $dbuser -p$dbpassword -D $dbname -e "SELECT $arg2 FROM Job WHERE $arg1 ORDER BY jobid DESC LIMIT 1 OFFSET 0" --skip-column-names|xargs)
-  echo $status_job
+  if [ "$status_job" == "" ]
+  then
+    echo "0"
+  else
+    echo $status_job
+  fi
 }
 
 ## EXECUTION
@@ -83,7 +73,7 @@ ISPOSTGRES=$(export PGPASSWORD=$dbpassword && /usr/bin/psql -h$DBAddress -U$dbus
 if [ "$ISPOSTGRES" == "" ];then
   get_job_param_mysql $1 $2 $3
 else
-  get_job_param $1 $2 $3
+  get_job_param_pgsql $1 $2 $3
 fi
 
-rm -f /tmp/bacula_conf
+rm -f /tmp/bacula_conf_${pid}
